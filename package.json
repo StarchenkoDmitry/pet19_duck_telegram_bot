@@ -5,8 +5,19 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf ./build && tsc",
-    "start": "npm run build && node build/index.js",
-    "dev": "npx nodemon"
+    "build:start": "npm run build && node build/main.js",
+    "start": "node build/main.js",
+    "dev": "npx nodemon",
+
+    "db":"typeorm-ts-node-esm",
+    "db:create":"npm run db migration:create ./src/db/migrations/empty",
+    "db:generate":"npm run db migration:generate -- --pretty -d ./src/db/dataSource.ts ./src/db/migrations/auto",
+    
+    "db:run":"npm run db migration:run -- -d ./src/db/dataSource.ts",
+    "db:back":"npm run db migration:revert -- -d ./src/db/dataSource.ts",
+    "db:runfake":"npm run db migration:run -- --fake -d ./src/db/dataSource.ts",
+
+    "db:show":"npm run db migration:show -- -d ./src/db/dataSource.ts"
   },
   "dependencies": {
     "@grammyjs/runner": "^2.0.3",
