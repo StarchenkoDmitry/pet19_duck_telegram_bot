@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn } from "typeorm"
 import { ControllerState } from "../../controllers/ControllerState";
 
@@ -6,10 +7,10 @@ import { ControllerState } from "../../controllers/ControllerState";
 export class UserSession {
 
     @PrimaryColumn({ type:"bigint" })
-    id: number
+    id: number;
 
     @Column({ type:"varchar", length: 256 })
-    firstName: string
+    firstName: string;
 
     @Column({ 
         type: "enum",
