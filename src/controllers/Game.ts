@@ -10,7 +10,7 @@ export const KeyActionExit = "Выход/Выйти🔙 в меню";
 
 
 export const Maps = {
-    // OnePixel: "Один пиксилёк",
+    OnePixel: "Один пиксилёк",
     Pong: "Ping 🏓 Pong"
 } as const;
 
@@ -36,8 +36,8 @@ export interface GameState{
 
 
 export function GetRandomMap(){
-    const keys = Object.keys(Maps);
-    return Maps[randomInt(keys.length)];
+    const keys = Object.keys(Maps) as [keyof typeof Maps];
+    return Maps[keys[randomInt(keys.length)]];
 }
 
 export function CreateGame():GameState {
