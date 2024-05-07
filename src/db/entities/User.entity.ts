@@ -14,12 +14,10 @@ export class UserSession {
     firstName: string;
 
     @Column({ 
-        type: "enum",
-        enum: ControllerState,
+        type: "int",
         default: ControllerState.none,
     })
     state: ControllerState;
-
 
     @Column("varchar",{ 
         length: 8, 
