@@ -2,6 +2,7 @@ import { IController } from "../types/Controller";
 import { ControllerState } from "./ControllerState";
 import { Keyboard } from "grammy";
 import { ChangeController } from "./ControllerList";
+import { DuckContext } from "../types/DuckContext";
 
 
 type LanguageAndCode = { name: string, code:string };
@@ -18,7 +19,7 @@ export const KeyBack = "🔙Back";
 export const KeyNext = "⏭Next";
 
 const numberOfLanguage = LanguagesList.length;
-const numberOfLanguageOnPage = 6;
+const numberOfLanguageOnPage = 3;
 const numberOfLanguageOnRow = 3;
 const maxPageNumber = Math.ceil(numberOfLanguage / numberOfLanguageOnPage) - 1;
 
@@ -46,67 +47,53 @@ function createKeyborad(page:number){
     return keys;
 }
 
+async function setUserKeyboard(
+    ctx: DuckContext,
+    page: number,
+){
+    const sendPage = page > maxPageNumber ? maxPageNumber : page < 0 ? 0 : page;
+    states.set(ctx.session.id,{ currentPage: sendPage });
+    await ctx.reply(`Page ${ sendPage + 1 }/${maxPageNumber + 1}`,{
+        reply_markup: createKeyborad(sendPage)
+    });
+}
+
+async function pageShift(
+    ctx: DuckContext,
+    offsetPage: number,
+){
+    const currentPage = states.get(ctx.session.id)?.currentPage ?? 0;
+    return await setUserKeyboard(ctx,currentPage + offsetPage);
+}
+
 export const LanguageSettingsController:IController = {
     state: ControllerState.languageSettings,
     controller: async (ctx)=>{
         const text = ctx.message?.text;
         if(!text) return;
 
-        const state = states.get(ctx.session.id);
-        if(!state){
-            states.set(ctx.session.id,{
-                currentPage: 0
-            });
-            await ctx.reply("Choose a language lol",{
-                reply_markup: createKeyborad(0)
-            });
-            return;
-        }
-
         if(text === KeyNext){
-            const nextPage = state.currentPage + 1 > maxPageNumber ? maxPageNumber : state.currentPage + 1;
-
-            states.set(ctx.session.id,{
-                currentPage: nextPage
-            });
-            await ctx.reply(`Next page number ${nextPage+1}`,{
-                reply_markup: createKeyborad(nextPage)
-            });
-            return;
-        }else if(text === KeyBack){
-            const backPage = state.currentPage - 1 < 0 ? 0 : state.currentPage - 1;
-
-            states.set(ctx.session.id,{
-                currentPage: backPage
-            });
-            await ctx.reply(`Next page number ${backPage+1}`,{
-                reply_markup: createKeyborad(backPage)
-            });
-            return;
-        }else if(text === KeyToMenu){
-            await ChangeController(ctx,ControllerState.menu);
-            return;
+            await pageShift(ctx,1);
         }
-
-        const lang = LanguagesList.find(l=>l.name === text);
-        if(lang){
-            ctx.session.languageCode = lang.code;
+        else if(text === KeyBack){
+            await pageShift(ctx,-1);
+        }
+        else if(text === KeyToMenu){
             await ChangeController(ctx,ControllerState.menu);
-        }else{
-            states.set(ctx.session.id,{
-                currentPage: 0
-            });
-            await ctx.reply(`Next page number of ${0+1}`,{
-                reply_markup: createKeyborad(0)
-            });
+        }
+        else{
+            const lang = LanguagesList.find(l=>l.name === text);
+            if(lang){
+                ctx.session.languageCode = lang.code;
+                await ChangeController(ctx,ControllerState.menu);
+            }
+            else{
+                await setUserKeyboard(ctx,0);
+            }
         }
     },
     enter: async (ctx)=>{
-        states.set(ctx.session.id,{
-            currentPage: 0
-        });
-        await ctx.reply("Choose a language",{
-            reply_markup: createKeyborad(0)
-        });
-    }
+        await ctx.reply("Choose a language");
+        await setUserKeyboard(ctx,0);
+    },
 }
