@@ -87,3 +87,5 @@ export class Config{
         return data;
     }
 }
+
+export const LANGUAGE_CODE_DEFAULT = "ru";
