@@ -83,6 +83,9 @@ export const LanguageSettingsController:IController = {
                 reply_markup: createKeyborad(backPage)
             });
             return;
+        }else if(text === KeyToMenu){
+            await ChangeController(ctx,ControllerState.menu);
+            return;
         }
 
         const lang = LanguagesList.find(l=>l.name === text);
