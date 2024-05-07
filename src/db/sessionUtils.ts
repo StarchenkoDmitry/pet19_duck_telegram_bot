@@ -2,6 +2,7 @@ import { Context, MiddlewareFn } from "grammy";
 import { DuckContext } from "../types/DuckContext";
 import { ControllerState } from "../controllers/ControllerState";
 import { UserSession } from "./entities/User.entity";
+import { LANGUAGE_CODE_DEFAULT } from "../config";
 
 
 export function initial(): UserSession {
@@ -10,6 +11,7 @@ export function initial(): UserSession {
         id: -1,
         firstName: "",
         state: ControllerState.none,
+        languageCode: LANGUAGE_CODE_DEFAULT
     };
 }
 
