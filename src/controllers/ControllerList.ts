@@ -3,6 +3,7 @@ import { DuckContext } from "../types/DuckContext";
 import { ControllerState } from "./ControllerState";
 import { GameController } from "./Game";
 import { MainMenuController } from "./MainMenu";
+import { LanguageSettingsController } from "./LanguageSettings";
 import { PingPong } from "./games/PingPong";
 
 
@@ -10,6 +11,7 @@ export const controllers: IController[] = [
     MainMenuController,
     GameController,
     PingPong,
+    LanguageSettingsController,
 ];
 
 

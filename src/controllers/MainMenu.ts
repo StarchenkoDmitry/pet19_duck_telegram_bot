@@ -12,13 +12,14 @@ import { ChangeController } from "./ControllerList";
 export const KeyChooseGame = "🎮Choose a game";
 export const KeyRandomWeapone = "🎲Random Weapone";
 export const KeyWhoAmI = "🤪Who am I";
+export const KeySettings = "👅Language Settings";
 
 const weapones = [ "🦆Лапка", "🕸СеткаҐАН" ] as const;
 
 const menu = new Keyboard()
     .text(KeyChooseGame).row()
     .text(KeyRandomWeapone).row()
-    .text(KeyWhoAmI).row()
+    .text(KeyWhoAmI).text(KeySettings).row()
     .resized();
 
 export const MainMenuController:IController = {
@@ -34,8 +35,10 @@ export const MainMenuController:IController = {
             case KeyChooseGame:
                 await ChangeController(ctx,ControllerState.game);
             break;
-            case KeyRandomWeapone:
-                
+            case KeySettings:
+                await ChangeController(ctx,ControllerState.languageSettings);
+            break;
+            case KeyRandomWeapone:                
                 const weapone = weapones[randomInt(weapones.length)];
 
                 await ctx.reply(`You have been given ${weapone}`);

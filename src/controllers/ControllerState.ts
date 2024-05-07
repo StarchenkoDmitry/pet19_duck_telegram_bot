@@ -1,6 +1,8 @@
 export enum ControllerState{
-    none,//for one inition SessionData
-    menu,
-    game,
-    pingpong,
+    none =0,//for one inition SessionData
+    menu =1,
+    game =2,
+    pingpong =3,
+
+    languageSettings =4,
 }
