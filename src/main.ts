@@ -36,16 +36,16 @@ async function bootstrap() {
     bot.use(sessionExist());
 
 
-    bot.api.setMyCommands([
-        {
-            command:"start",
-            description:"Start the bot"
-        },
-        {
-            command:"restart",
-            description:"Restart the bot"
-        }
-    ])
+    // bot.api.setMyCommands([
+    //     {
+    //         command:"start",
+    //         description:"Start the bot"
+    //     },
+    //     {
+    //         command:"restart",
+    //         description:"Restart the bot"
+    //     }
+    // ])
 
 
     // bot.command("delete", async (ctx)=>{
