@@ -1,15 +1,19 @@
+import { Config } from "./config";
+
 import { Bot, session } from "grammy";
-import { ChangeController, controllers } from "./controllers/ControllerList";
+import { run, sequentialize } from "@grammyjs/runner";
 
 import { DuckContext } from "./types/DuckContext";
-import { getSessionKey, initial, sessionExist } from "./db/sessionUtils";
-import { ControllerState } from "./controllers/ControllerState";
 
-import { run, sequentialize } from "@grammyjs/runner";
-import { logger } from "./shared/logger/logger";
-import { Config } from "./config";
-import { createDataSource } from "./db/createDataSource";
+import { getSessionKey, initial, sessionExist } from "./db/sessionUtils";
 import { SessionStorage } from "./db/SessionStorage";
+import { createDataSource } from "./db/createDataSource";
+
+import { createTranslator } from "./i18n/translater";
+import { logger } from "./shared/logger/logger";
+
+import { ControllerState } from "./controllers/ControllerState";
+import { ChangeController, controllers } from "./controllers/ControllerList";
 
 
 async function bootstrap() {
@@ -35,23 +39,7 @@ async function bootstrap() {
 
     bot.use(sessionExist());
 
-
-    // bot.api.setMyCommands([
-    //     {
-    //         command:"start",
-    //         description:"Start the bot"
-    //     },
-    //     {
-    //         command:"restart",
-    //         description:"Restart the bot"
-    //     }
-    // ])
-
-
-    // bot.command("delete", async (ctx)=>{
-    //     (ctx.session as any) = undefined;
-    //     await ctx.reply(`current state:${ctx.session}`);
-    // });
+    bot.use(createTranslator());
 
 
     bot.command("restart", async (ctx)=>{
@@ -81,7 +69,6 @@ async function bootstrap() {
 
         ctx.session.firstName = ctx.from.first_name;
         ctx.session.id = ctx.from.id;
-        // ctx.session.state = ControllerState.menu;
 
         await ctx.reply(`Congratulations you're a new user.`);
 
@@ -100,7 +87,7 @@ async function bootstrap() {
         const controller = controllers.find((c)=>c.state === state);
 
         if(!controller){
-            throw new Error("Controller is not found");
+            await ChangeController(ctx,ControllerState.menu);
             return;
         }
 
