@@ -11,7 +11,7 @@ export function createTranslator(){
             return ctx.session.languageCode ?? LANGUAGE_CODE_DEFAULT;
         },
         globalTranslationContext(ctx) {
-            return { name: ctx.from?.first_name ?? "" };
+            return { userFirstName: ctx.session.firstName ?? "" };
         },
     });
     return i18n;
