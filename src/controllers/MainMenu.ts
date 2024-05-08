@@ -1,27 +1,25 @@
-import { KeyboardButton } from "grammy/types";
 import { IController } from "../types/Controller";
-import { CreateGame } from "./Game";
 import { ControllerState } from "./ControllerState";
 import { Keyboard } from "grammy";
 import { randomInt } from "crypto";
 import { ChangeController } from "./ControllerList";
+import { DuckContext } from "../types/DuckContext";
 
 
-// export const KeyStartPlay = "Start play";
-
-export const KeyChooseGame = "🎮Choose a game";
-export const KeyRandomWeapone = "🎲Random Weapone";
-export const KeyWhoAmI = "🤪Who am I";
-export const KeySettings = "👅Language Settings";
 
 const weapones = [ "🦆Лапка", "🕸СеткаҐАН" ] as const;
 
-const menu = new Keyboard()
-    .text(KeyChooseGame).row()
-    .text(KeyRandomWeapone).row()
-    .text(KeyWhoAmI).text(KeySettings).row()
-    .resized();
 
+function createMenu(ctx: DuckContext){
+    const menu = new Keyboard()
+    .text(ctx.t("main-menu_btn_choose-game")).row()
+    .text(ctx.t("main-menu_btn_random-weapon")).row()
+    .text(ctx.t("main-menu_btn_whoami"))
+    .text(ctx.t("main-menu_btn_lang-settings")).row()
+    .resized();
+    return menu;
+}
+    
 export const MainMenuController:IController = {
     state: ControllerState.menu,
     controller: async (ctx)=>{
@@ -30,24 +28,24 @@ export const MainMenuController:IController = {
         if(!text)return;
 
         switch(text){
-            case KeyChooseGame:
+            case ctx.t("main-menu_btn_choose-game"):
                 await ChangeController(ctx,ControllerState.game);
             break;
-            case KeySettings:
+            case ctx.t("main-menu_btn_lang-settings"):
                 await ChangeController(ctx,ControllerState.languageSettings);
             break;
-            case KeyRandomWeapone:                
+            case ctx.t("main-menu_btn_random-weapon"):                
                 const weapone = weapones[randomInt(weapones.length)];
                 await ctx.reply(ctx.t("main-menu_random-weapone",{ weapone }));
             break;
-            case KeyWhoAmI:
+            case ctx.t("main-menu_btn_whoami"):
                 await ctx.reply(ctx.t("main-menu_whoami"));
             break;
         }
     },
     enter: async (ctx)=>{
         await ctx.reply(ctx.t("title-menu"),{
-            reply_markup: menu
+            reply_markup: createMenu(ctx)
         });
     }
 }

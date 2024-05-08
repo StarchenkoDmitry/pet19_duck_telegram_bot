@@ -3,17 +3,14 @@ import { IController } from "../../types/Controller";
 import { ControllerState } from "../ControllerState";
 import { Keyboard } from "grammy";
 import { ChangeController } from "../ControllerList";
+import { DuckContext } from "../../types/DuckContext";
 
 
 const MAX_TIME = 3000;
 const MIN_TIME = 1000;
 
-
 const KeyActionPing = "Ping 🏓";
 const KeyActionPong = "Pong 🦆";
-
-const KeyActionExit = "Выход/Выйти🔙 в меню";
-
 
 type KeyKey = typeof KeyActionPing | typeof KeyActionPong;
 const KeyActions = [KeyActionPing,KeyActionPong] as const;
@@ -25,21 +22,23 @@ interface PingPingGameData{
     timerHandle?: NodeJS.Timeout;
 };
 
-const gameSessions = new Map<number,PingPingGameData>();
+const GameStates = new Map<number,PingPingGameData>();
 
 
-const pingpongKeyboard = new Keyboard();
-KeyActions.forEach((m)=>{
-    pingpongKeyboard.text(m).row()
-});
-pingpongKeyboard.row();
-pingpongKeyboard.text(KeyActionExit);
+function createPingPongMenu(ctx: DuckContext){
+    const pingpongKeyboard = new Keyboard();
+    KeyActions.forEach((m)=>{
+        pingpongKeyboard.text(m).row()
+    });
+    pingpongKeyboard.row();
+    pingpongKeyboard.text(ctx.t("btn_to-menu"));
+    return pingpongKeyboard;
+}
 
 export const PingPong:IController = {
-    state: ControllerState.pingpong,   
-
+    state: ControllerState.pingpong,
     enter: async (ctx)=>{
-        const game = gameSessions.get(ctx.session.id);
+        const game = GameStates.get(ctx.session.id);
         if(game){
             if(game.timerHandle){
                 clearTimeout(game.timerHandle);
@@ -54,29 +53,29 @@ export const PingPong:IController = {
                 newGame.userKey = key;
             }, randomInt(MIN_TIME,MAX_TIME))
         }
-        gameSessions.set(ctx.session.id,newGame);
+        GameStates.set(ctx.session.id,newGame);
 
-        
+
         await ctx.reply(ctx.t("ping-pong_wait"),{
-            reply_markup: pingpongKeyboard
+            reply_markup: createPingPongMenu(ctx)
         });
     },
     exit: async (ctx)=>{
-        const game = gameSessions.get(ctx.session.id);
+        const game = GameStates.get(ctx.session.id);
         if(game){
             clearTimeout(game.timerHandle);
-            gameSessions.delete(ctx.session.id);
+            GameStates.delete(ctx.session.id);
         }
         await ctx.reply(ctx.t("ping-pong_close"));
     },
     controller: async (ctx)=>{
         const text = ctx.message?.text;
 
-        if(text === KeyActionExit){
-            const game = gameSessions.get(ctx.session.id);
+        if(text === ctx.t("btn_to-menu")){
+            const game = GameStates.get(ctx.session.id);
             if(game){
                 clearTimeout(game.timerHandle);
-                gameSessions.delete(ctx.session.id);
+                GameStates.delete(ctx.session.id);
             }
             await ChangeController(ctx,ControllerState.menu);
         }
@@ -84,7 +83,7 @@ export const PingPong:IController = {
         if(text !== KeyActionPing && text !== KeyActionPong) return;
 
 
-        const game = gameSessions.get(ctx.session.id);
+        const game = GameStates.get(ctx.session.id);
         if(!game) return;
 
         if(game.isReacted && !game.userKey){
