@@ -45,7 +45,7 @@ async function bootstrap() {
     bot.command("restart", async (ctx)=>{
         if(!ctx.from){ return; }
         console.log("event reset from:",ctx.from);
-        await ctx.reply(`You are done reset.`);
+        await ctx.reply(ctx.t("restart"));
         
         ctx.session.firstName = ctx.from.first_name;
         ctx.session.id = ctx.from.id;
@@ -63,14 +63,14 @@ async function bootstrap() {
         if(!ctx.from){ return; }
         
         if(ctx.session.state !== ControllerState.none){
-            await ctx.reply(`You are already registered.`);
+            await ctx.reply(ctx.t("start-registered"));
             return;
         }
 
         ctx.session.firstName = ctx.from.first_name;
         ctx.session.id = ctx.from.id;
 
-        await ctx.reply(`Congratulations you're a new user.`);
+        await ctx.reply(ctx.t("start-welcome"));
 
         await ChangeController(ctx,ControllerState.menu);
     });
@@ -80,7 +80,7 @@ async function bootstrap() {
         const state = ctx.session.state;
 
         if(state === ControllerState.none){
-            await ctx.reply("You is not registered! Please type a message /start to chat.");
+            await ctx.reply(ctx.t("auth-error-unregistered"));
             return;
         }
 
