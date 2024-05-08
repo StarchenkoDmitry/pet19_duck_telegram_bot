@@ -1,4 +1,4 @@
-import { Config } from "./config";
+import { Config, LANGUAGE_CODE_DEFAULT } from "./config";
 
 import { Bot, session } from "grammy";
 import { run, sequentialize } from "@grammyjs/runner";
@@ -44,11 +44,14 @@ async function bootstrap() {
 
     bot.command("restart", async (ctx)=>{
         if(!ctx.from){ return; }
-        console.log("event reset from:",ctx.from);
-        await ctx.reply(ctx.t("restart"));
         
         ctx.session.firstName = ctx.from.first_name;
         ctx.session.id = ctx.from.id;
+        ctx.session.languageCode = ctx.from.language_code ?? LANGUAGE_CODE_DEFAULT;
+        ctx.i18n.useLocale(ctx.session.languageCode);
+        
+        console.log("event reset from:",ctx.from);
+        await ctx.reply(ctx.t("restart"));
 
         await ChangeController(ctx,ControllerState.menu);
     });
@@ -69,6 +72,8 @@ async function bootstrap() {
 
         ctx.session.firstName = ctx.from.first_name;
         ctx.session.id = ctx.from.id;
+        ctx.session.languageCode = ctx.from.language_code ?? LANGUAGE_CODE_DEFAULT;
+        ctx.i18n.useLocale(ctx.session.languageCode);
 
         await ctx.reply(ctx.t("start-welcome"));
 
