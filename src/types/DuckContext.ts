@@ -1,15 +1,6 @@
 import { Context, SessionFlavor } from "grammy";
-import { GameState } from "../controllers/Game";
-import { ControllerState } from "../controllers/ControllerState";
 import { UserSession } from "../db/entities/User.entity";
+import { I18nFlavor } from "@grammyjs/i18n";
 
-// export interface SessionData {
-//     id: number;
-//     firstName: string;
 
-//     state: ControllerState;
-
-//     // gameState?: GameState;
-// }
-
-export type DuckContext = Context & SessionFlavor<UserSession>;
+export type DuckContext = Context & I18nFlavor & SessionFlavor<UserSession>;
