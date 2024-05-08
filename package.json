@@ -1,7 +1,7 @@
 {
   "name": "pet19_duck_telegram_bot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "build/index.js",
   "license": "MIT",
   "scripts": {
     "build": "rimraf ./build && tsc",
