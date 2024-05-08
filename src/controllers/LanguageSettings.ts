@@ -53,7 +53,10 @@ async function setUserKeyboard(
 ){
     const sendPage = page > maxPageNumber ? maxPageNumber : page < 0 ? 0 : page;
     states.set(ctx.session.id,{ currentPage: sendPage });
-    await ctx.reply(`Page ${ sendPage + 1 }/${maxPageNumber + 1}`,{
+    await ctx.reply(ctx.t("lang-settings_page",{
+        page: sendPage + 1,
+        lastPage: maxPageNumber + 1
+    }),{
         reply_markup: createKeyborad(sendPage)
     });
 }
@@ -85,6 +88,7 @@ export const LanguageSettingsController:IController = {
             const lang = LanguagesList.find(l=>l.name === text);
             if(lang){
                 ctx.session.languageCode = lang.code;
+                ctx.i18n.useLocale(lang.code);
                 await ChangeController(ctx,ControllerState.menu);
             }
             else{
@@ -93,7 +97,7 @@ export const LanguageSettingsController:IController = {
         }
     },
     enter: async (ctx)=>{
-        await ctx.reply("Choose a language");
+        await ctx.reply(ctx.t("lang-settings_choose-lang"));
         await setUserKeyboard(ctx,0);
     },
 }

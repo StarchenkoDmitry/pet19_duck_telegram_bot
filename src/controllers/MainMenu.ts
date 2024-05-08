@@ -29,8 +29,6 @@ export const MainMenuController:IController = {
         
         if(!text)return;
 
-        const user = ctx.session;
-
         switch(text){
             case KeyChooseGame:
                 await ChangeController(ctx,ControllerState.game);
@@ -40,16 +38,15 @@ export const MainMenuController:IController = {
             break;
             case KeyRandomWeapone:                
                 const weapone = weapones[randomInt(weapones.length)];
-
-                await ctx.reply(`You have been given ${weapone}`);
+                await ctx.reply(ctx.t("main-menu_random-weapone",{ weapone }));
             break;
             case KeyWhoAmI:
-                await ctx.reply(`First name: ${ctx.session.firstName}`);
+                await ctx.reply(ctx.t("main-menu_whoami"));
             break;
         }
     },
-    enter:  async (ctx)=>{
-        await ctx.reply("Меню",{
+    enter: async (ctx)=>{
+        await ctx.reply(ctx.t("title-menu"),{
             reply_markup: menu
         });
     }

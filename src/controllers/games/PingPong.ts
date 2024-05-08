@@ -49,15 +49,15 @@ export const PingPong:IController = {
         const newGame: PingPingGameData = {
             isReacted: false,
             timerHandle: setTimeout(async () => {
-                const randKey = KeyActions[randomInt(KeyActions.length)]
-                await ctx.reply(`Current key: ${randKey}`);
-                newGame.userKey = randKey;
+                const key = KeyActions[randomInt(KeyActions.length)];
+                await ctx.reply(ctx.t("ping-pong_key",{key}));
+                newGame.userKey = key;
             }, randomInt(MIN_TIME,MAX_TIME))
         }
         gameSessions.set(ctx.session.id,newGame);
 
         
-        await ctx.reply("Wait ping or ping...",{
+        await ctx.reply(ctx.t("ping-pong_wait"),{
             reply_markup: pingpongKeyboard
         });
     },
@@ -67,7 +67,7 @@ export const PingPong:IController = {
             clearTimeout(game.timerHandle);
             gameSessions.delete(ctx.session.id);
         }
-        await ctx.reply(`Game is closed`);
+        await ctx.reply(ctx.t("ping-pong_close"));
     },
     controller: async (ctx)=>{
         const text = ctx.message?.text;
@@ -88,23 +88,23 @@ export const PingPong:IController = {
         if(!game) return;
 
         if(game.isReacted && !game.userKey){
-            await ctx.reply("you is fastes, please wait..");
+            await ctx.reply(ctx.t("ping-pong_fast"));
             return;
         }
 
         const correctKey = game.userKey !== text;
         if(correctKey){
-            const randSmile = ["😉","😜"][randomInt(2)];
-            await ctx.reply(`Cool ${randSmile}`);
+            const smile = ["😉","😜"][randomInt(2)];
+            await ctx.reply(ctx.t("ping-pong_win",{smile}));
         }else{
-            const randSmile = ["😭","😥"][randomInt(2)];
-            await ctx.reply(`Loser ${randSmile}`);
+            const smile = ["😭","😥"][randomInt(2)];
+            await ctx.reply(ctx.t("ping-pong_loss",{smile}));
         }
 
         const newTimer = setTimeout(async () => {
-            const randKey = KeyActions[randomInt(KeyActions.length)]
-            await ctx.reply(`Current key: ${randKey}`);
-            game.userKey = randKey;
+            const key = KeyActions[randomInt(KeyActions.length)]
+            await ctx.reply(ctx.t("ping-pong_key",{key}));
+            game.userKey = key;
         }, randomInt(MIN_TIME,MAX_TIME));
 
         game.timerHandle = newTimer;

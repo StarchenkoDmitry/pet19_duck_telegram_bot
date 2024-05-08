@@ -19,10 +19,6 @@ export const Weapones = {
     NewGun: "СеткаҐАН"
 } as const; 
 
-export const Steps = {
-    ChooseGun: "Выбирите пуську(не пisьку)",
-    Fight: "Бой"
-} as const;
 
 
 export type MapsType = (typeof Maps)[keyof typeof Maps];
@@ -78,7 +74,7 @@ export const GameController:IController = {
         }
     },
     enter: async (ctx) =>{
-        await ctx.reply("Choose a game.",{
+        await ctx.reply(ctx.t("game_choose"),{
             reply_markup: gamesKeyboard
         });
     }
