@@ -32,4 +32,11 @@ export async function ChangeController(ctx: DuckContext,name:ControllerState){
         await nextController.enter(ctx);
         ctx.session.state = name;
     }
+    else if(MainMenuController.enter){
+        ctx.session.state = ControllerState.menu;
+        await MainMenuController.enter(ctx);
+    }
+    else{
+        throw new Error("ChangeController -> None of the controllers were found");
+    }
 }
